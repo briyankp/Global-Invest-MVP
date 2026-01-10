@@ -30,6 +30,14 @@ const App: React.FC = () => {
         setNavigationPayload(payload);
     }, []);
 
+    const mainRef = React.useRef<HTMLElement>(null);
+
+    React.useEffect(() => {
+        if (mainRef.current) {
+            mainRef.current.scrollTo(0, 0);
+        }
+    }, [currentScreen]);
+
     const handleLogin = () => {
         setIsAuthenticated(true);
         setIsOnboardingComplete(true);
@@ -59,10 +67,10 @@ const App: React.FC = () => {
                     return <LoginScreen onLogin={handleLogin} onSignUp={() => navigate(SCREENS.ONBOARDING)} />;
             }
         }
-        
+
         // Authenticated user flows
         if (!isOnboardingComplete) {
-             return <OnboardingScreen onComplete={() => setIsOnboardingComplete(true)} navigate={navigate} />;
+            return <OnboardingScreen onComplete={() => setIsOnboardingComplete(true)} navigate={navigate} />;
         }
 
         switch (currentScreen) {
@@ -92,7 +100,7 @@ const App: React.FC = () => {
     return (
         <div className="h-screen w-screen bg-white font-sans flex flex-col items-center">
             <div className="relative w-full max-w-md h-full flex flex-col bg-gray-50 shadow-2xl">
-                <main className="flex-1 overflow-y-auto pb-20">
+                <main ref={mainRef} className="flex-1 overflow-y-auto pb-20">
                     {renderContent()}
                 </main>
                 {showNav && (
