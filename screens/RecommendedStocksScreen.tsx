@@ -75,6 +75,7 @@ const ConfidenceScore: React.FC<{ score: number }> = ({ score }) => {
 const RecommendedStocksScreen: React.FC<RecommendedStocksScreenProps> = ({ navigate, payload }) => {
     const { title, relatedStocks: stocks, rationale, timing, horizon } = payload;
     const [showInvestModal, setShowInvestModal] = useState(false);
+    const [isInvestSuccess, setIsInvestSuccess] = useState(false);
     const [investAmount, setInvestAmount] = useState('1000');
 
     // Typewriter for rationale
@@ -198,56 +199,74 @@ const RecommendedStocksScreen: React.FC<RecommendedStocksScreenProps> = ({ navig
             {showInvestModal && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center backdrop-blur-sm">
                     <div className="bg-white w-full max-w-md rounded-t-3xl p-6 animate-slideUp">
-                        <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-xl font-bold text-gray-900">Invest in "{title}"</h3>
-                            <button onClick={() => setShowInvestModal(false)} className="text-gray-400 text-2xl">×</button>
-                        </div>
-
-                        <div className="mb-6">
-                            <label className="text-sm text-gray-600 mb-2 block">Investment Amount</label>
-                            <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span>
-                                <input
-                                    type="number"
-                                    value={investAmount}
-                                    onChange={(e) => setInvestAmount(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-4 text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none"
-                                />
-                            </div>
-                            <p className="text-sm text-gray-500 mt-2">
-                                ≈ ₹{(parseFloat(investAmount || '0') * USD_TO_INR).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
-                            </p>
-                        </div>
-
-                        {/* Allocation Preview */}
-                        <div className="bg-gray-50 rounded-xl p-4 mb-6">
-                            <p className="text-xs text-gray-500 mb-3">Your investment will be split:</p>
-                            {stocks?.map((stock, i) => (
-                                <div key={stock.ticker} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
-                                    <div className="flex items-center gap-2">
-                                        <img src={stock.logo} alt={stock.name} className="w-6 h-6 rounded-full" />
-                                        <span className="font-medium text-gray-800">{stock.ticker}</span>
-                                    </div>
-                                    <div className="text-right">
-                                        <span className="font-bold text-gray-900">
-                                            ${((parseFloat(investAmount || '0') * allocations[i]) / 100).toFixed(2)}
-                                        </span>
-                                        <span className="text-xs text-gray-500 ml-1">({allocations[i]}%)</span>
-                                    </div>
+                        {isInvestSuccess ? (
+                            <div className="flex flex-col items-center justify-center py-10 animate-fadeIn">
+                                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 animate-bounce-subtle">
+                                    <svg className="w-8 h-8 text-positive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                    </svg>
                                 </div>
-                            ))}
-                        </div>
+                                <h3 className="text-xl font-bold text-gray-900 mb-2">Investment Confirmed!</h3>
+                                <p className="text-sm text-gray-500">Redirecting you to home...</p>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="flex items-center justify-between mb-6">
+                                    <h3 className="text-xl font-bold text-gray-900">Invest in "{title}"</h3>
+                                    <button onClick={() => setShowInvestModal(false)} className="text-gray-400 text-2xl">×</button>
+                                </div>
 
-                        <button
-                            onClick={() => {
-                                setShowInvestModal(false);
-                                navigate(SCREENS.HOME);
-                            }}
-                            className="w-full py-4 bg-positive text-white font-bold rounded-xl text-lg"
-                        >
-                            Confirm Investment
-                        </button>
-                        <p className="text-xs text-gray-400 text-center mt-3">Orders execute at market open</p>
+                                <div className="mb-6">
+                                    <label className="text-sm text-gray-600 mb-2 block">Investment Amount</label>
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span>
+                                        <input
+                                            type="number"
+                                            value={investAmount}
+                                            onChange={(e) => setInvestAmount(e.target.value)}
+                                            className="w-full pl-10 pr-4 py-4 text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none"
+                                        />
+                                    </div>
+                                    <p className="text-sm text-gray-500 mt-2">
+                                        ≈ ₹{(parseFloat(investAmount || '0') * USD_TO_INR).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                                    </p>
+                                </div>
+
+                                {/* Allocation Preview */}
+                                <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                                    <p className="text-xs text-gray-500 mb-3">Your investment will be split:</p>
+                                    {stocks?.map((stock, i) => (
+                                        <div key={stock.ticker} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
+                                            <div className="flex items-center gap-2">
+                                                <img src={stock.logo} alt={stock.name} className="w-6 h-6 rounded-full" />
+                                                <span className="font-medium text-gray-800">{stock.ticker}</span>
+                                            </div>
+                                            <div className="text-right">
+                                                <span className="font-bold text-gray-900">
+                                                    ${((parseFloat(investAmount || '0') * allocations[i]) / 100).toFixed(2)}
+                                                </span>
+                                                <span className="text-xs text-gray-500 ml-1">({allocations[i]}%)</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <button
+                                    onClick={() => {
+                                        setIsInvestSuccess(true);
+                                        setTimeout(() => {
+                                            setIsInvestSuccess(false);
+                                            setShowInvestModal(false);
+                                            navigate(SCREENS.HOME);
+                                        }, 2000);
+                                    }}
+                                    className="w-full py-4 bg-positive text-white font-bold rounded-xl text-lg hover:bg-green-600 transition-colors shadow-lg shadow-green-500/20"
+                                >
+                                    Confirm Investment
+                                </button>
+                                <p className="text-xs text-gray-400 text-center mt-3">Orders execute at market open</p>
+                            </>
+                        )}
                     </div>
                 </div>
             )}

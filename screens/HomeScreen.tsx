@@ -20,6 +20,7 @@ const HomeScreen: React.FC<NavigationProps> = ({ navigate }) => {
     const [showTrustModal, setShowTrustModal] = useState(false);
     const [selectedPortfolio, setSelectedPortfolio] = useState<AiPortfolio | null>(null);
     const [showInvestModal, setShowInvestModal] = useState(false);
+    const [isInvestSuccess, setIsInvestSuccess] = useState(false);
     const [investAmount, setInvestAmount] = useState('1000');
     const [isBalanceHidden, setIsBalanceHidden] = useState(false);
     const totalValue = mockHoldings.reduce((acc, h) => acc + h.totalValue, 0);
@@ -313,51 +314,68 @@ const HomeScreen: React.FC<NavigationProps> = ({ navigate }) => {
             {showInvestModal && selectedPortfolio && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center backdrop-blur-sm">
                     <div className="bg-white w-full max-w-md rounded-t-3xl p-6 animate-slideUp">
-                        <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-xl font-bold text-gray-900">Invest in "{selectedPortfolio.name}"</h3>
-                            <button onClick={() => setShowInvestModal(false)} className="text-gray-400 text-2xl">×</button>
-                        </div>
-
-                        <div className="mb-6">
-                            <label className="text-sm text-gray-600 mb-2 block">Investment Amount</label>
-                            <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span>
-                                <input
-                                    type="number"
-                                    value={investAmount}
-                                    onChange={(e) => setInvestAmount(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-4 text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none"
-                                />
+                        {isInvestSuccess ? (
+                            <div className="flex flex-col items-center justify-center py-10 animate-fadeIn">
+                                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 animate-bounce-subtle">
+                                    <svg className="w-8 h-8 text-positive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-900 mb-2">Investment Confirmed!</h3>
+                                <p className="text-sm text-gray-500">Redirecting you to home...</p>
                             </div>
-                            <p className="text-sm text-gray-500 mt-2">
-                                ≈ ₹{(parseFloat(investAmount || '0') * USD_TO_INR).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
-                            </p>
-                        </div>
+                        ) : (
+                            <>
+                                <div className="flex items-center justify-between mb-6">
+                                    <h3 className="text-xl font-bold text-gray-900">Invest in "{selectedPortfolio.name}"</h3>
+                                    <button onClick={() => setShowInvestModal(false)} className="text-gray-400 text-2xl">×</button>
+                                </div>
 
-                        {/* Portfolio Info */}
-                        <div className="bg-gray-50 rounded-xl p-4 mb-6">
-                            <div className="flex justify-between items-center mb-3">
-                                <span className="text-sm font-medium text-gray-600">Expected Return</span>
-                                <span className="font-bold text-positive">{selectedPortfolio.cagr.toFixed(1)}% avg/year</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                                <span className="text-sm font-medium text-gray-600">Risk Level</span>
-                                <span className={`font-semibold ${selectedPortfolio.risk === 'Low' ? 'text-positive' : selectedPortfolio.risk === 'Medium' ? 'text-yellow-600' : 'text-orange-500'}`}>
-                                    {selectedPortfolio.risk}
-                                </span>
-                            </div>
-                        </div>
+                                <div className="mb-6">
+                                    <label className="text-sm text-gray-600 mb-2 block">Investment Amount</label>
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span>
+                                        <input
+                                            type="number"
+                                            value={investAmount}
+                                            onChange={(e) => setInvestAmount(e.target.value)}
+                                            className="w-full pl-10 pr-4 py-4 text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none"
+                                        />
+                                    </div>
+                                    <p className="text-sm text-gray-500 mt-2">
+                                        ≈ ₹{(parseFloat(investAmount || '0') * USD_TO_INR).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                                    </p>
+                                </div>
 
-                        <button
-                            onClick={() => {
-                                setShowInvestModal(false);
-                                // Could navigate to success screen or show confirmation
-                            }}
-                            className="w-full py-4 bg-positive text-white font-bold rounded-xl text-lg"
-                        >
-                            Confirm Investment
-                        </button>
-                        <p className="text-xs text-gray-400 text-center mt-3">AI will manage your investment automatically</p>
+                                {/* Portfolio Info */}
+                                <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <span className="text-sm font-medium text-gray-600">Expected Return</span>
+                                        <span className="font-bold text-positive">{selectedPortfolio.cagr.toFixed(1)}% avg/year</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-sm font-medium text-gray-600">Risk Level</span>
+                                        <span className={`font-semibold ${selectedPortfolio.risk === 'Low' ? 'text-positive' : selectedPortfolio.risk === 'Medium' ? 'text-yellow-600' : 'text-orange-500'}`}>
+                                            {selectedPortfolio.risk}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={() => {
+                                        setIsInvestSuccess(true);
+                                        setTimeout(() => {
+                                            setIsInvestSuccess(false);
+                                            setShowInvestModal(false);
+                                        }, 2000);
+                                    }}
+                                    className="w-full py-4 bg-positive text-white font-bold rounded-xl text-lg hover:bg-green-600 transition-colors shadow-lg shadow-green-500/20"
+                                >
+                                    Confirm Investment
+                                </button>
+                                <p className="text-xs text-gray-400 text-center mt-3">AI will manage your investment automatically</p>
+                            </>
+                        )}
                     </div>
                 </div>
             )}
