@@ -87,7 +87,7 @@ const App: React.FC = () => {
                     return <KycSuccessScreen onComplete={handleLogin} />;
                 case SCREENS.LOGIN:
                 default:
-                    return <LoginScreen onLogin={handleLogin} onSignUp={() => navigate(SCREENS.ONBOARDING)} />;
+                    return <LoginScreen onLogin={handleLogin} onSignUp={() => navigate(SCREENS.ONBOARDING)} onInstall={handleInstallClick} canInstall={!!deferredPrompt} />;
             }
         }
 
