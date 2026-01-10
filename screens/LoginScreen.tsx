@@ -9,44 +9,76 @@ interface LoginScreenProps {
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
     return (
-        <div className="flex flex-col items-center justify-center h-full bg-primary p-8 text-white">
-            <div className="text-center">
-                <div className="inline-block p-4 bg-white/20 rounded-full mb-6">
-                    <div className="w-16 h-16 text-primary-dark">
-                         <SparklesIcon />
+        <div className="relative flex flex-col items-center justify-center h-full p-8 text-white overflow-hidden">
+            {/* Animated gradient background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary via-purple-900 to-primary-dark">
+                <div className="absolute inset-0 opacity-30">
+                    {/* Floating orbs */}
+                    <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
+                    <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-pink-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+                    <div className="absolute top-1/2 right-1/3 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+                </div>
+            </div>
+
+            {/* Content */}
+            <div className="relative z-10 text-center animate-fadeIn">
+                <div className="inline-block p-5 bg-white/10 backdrop-blur-md rounded-3xl mb-6 shadow-2xl">
+                    <div className="w-16 h-16 text-white">
+                        <SparklesIcon />
                     </div>
                 </div>
-                <h1 className="text-4xl font-bold">Global Invest AI</h1>
-                <p className="mt-4 text-lg text-white/80">Your AI-powered gateway to global markets.</p>
+                <h1 className="text-4xl font-extrabold tracking-tight">Global Invest AI</h1>
+                <p className="mt-3 text-lg text-white/80 max-w-xs mx-auto">Your AI-powered gateway to global markets.</p>
+
+                {/* Trust indicators */}
+                <div className="flex justify-center gap-3 mt-4">
+                    <span className="inline-flex items-center text-xs font-medium text-white/70 bg-white/10 px-2.5 py-1 rounded-full">
+                        <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        SIPC Protected
+                    </span>
+                    <span className="inline-flex items-center text-xs font-medium text-white/70 bg-white/10 px-2.5 py-1 rounded-full">
+                        <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 7.5a1 1 0 112 0v3.879l2.06 1.06a1 1 0 01-.89 1.79l-2.5-1.285A1 1 0 018 12V7.5z" />
+                        </svg>
+                        24/7 Trading
+                    </span>
+                </div>
             </div>
 
-            <div className="w-full mt-16 space-y-4">
-                 <input 
-                    type="email" 
-                    placeholder="Email" 
-                    className="w-full px-4 py-3 rounded-lg bg-white/20 placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white"
+            <div className="relative z-10 w-full mt-12 space-y-4 animate-slideUp" style={{ animationDelay: '0.2s' }}>
+                <input
+                    type="email"
+                    placeholder="Email"
+                    className="w-full px-4 py-4 rounded-xl bg-white/10 backdrop-blur-sm placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 border border-white/20 transition-all focus:bg-white/20"
                 />
-                 <input 
-                    type="password" 
-                    placeholder="Password" 
-                    className="w-full px-4 py-3 rounded-lg bg-white/20 placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white"
+                <input
+                    type="password"
+                    placeholder="Password"
+                    className="w-full px-4 py-4 rounded-xl bg-white/10 backdrop-blur-sm placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 border border-white/20 transition-all focus:bg-white/20"
                 />
             </div>
 
-            <div className="w-full mt-8">
+            <div className="relative z-10 w-full mt-6 space-y-3">
                 <button
                     onClick={onLogin}
-                    className="w-full py-4 text-lg font-bold text-primary bg-white rounded-lg shadow-lg hover:bg-gray-100 transition-all"
+                    className="w-full py-4 text-lg font-bold text-primary bg-white rounded-xl shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all active:scale-[0.98]"
                 >
                     Sign In
                 </button>
                 <button
                     onClick={onSignUp}
-                    className="w-full py-3 mt-4 text-lg font-semibold text-white bg-transparent border-2 border-white/50 rounded-lg hover:bg-white/10 transition-all"
+                    className="w-full py-4 text-lg font-semibold text-white bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl hover:bg-white/20 transition-all active:scale-[0.98]"
                 >
-                    Sign Up
+                    Create Account
                 </button>
             </div>
+
+            {/* Footer text */}
+            <p className="relative z-10 mt-8 text-xs text-white/50 text-center">
+                Invest in 50+ global markets • FX rates updated in real-time
+            </p>
         </div>
     );
 };

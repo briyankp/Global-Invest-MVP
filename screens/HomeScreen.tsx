@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { NavigationProps, Stock, AiPortfolio } from '../types';
 import { SCREENS } from '../constants';
 import { mockHoldings, mockWatchlist, mockAiPortfolios, mockAiInsights } from '../services/mockData';
@@ -8,11 +8,24 @@ import SparklesIcon from '../components/icons/SparklesIcon';
 import ChevronRightIcon from '../components/icons/ChevronRightIcon';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 
+const USD_TO_INR = 83.56;
+
 const HomeScreen: React.FC<NavigationProps> = ({ navigate }) => {
+    const [showINR, setShowINR] = useState(false);
+    const [selectedPortfolio, setSelectedPortfolio] = useState<AiPortfolio | null>(null);
+    const [showInvestModal, setShowInvestModal] = useState(false);
+    const [investAmount, setInvestAmount] = useState('1000');
     const totalValue = mockHoldings.reduce((acc, h) => acc + h.totalValue, 0);
+    const totalValueINR = totalValue * USD_TO_INR;
     const totalGain = 1250.75;
+    const totalGainINR = totalGain * USD_TO_INR;
     const totalGainPercent = (totalGain / (totalValue - totalGain)) * 100;
     const firstInsight = mockAiInsights[0];
+
+    const handleInvestClick = (portfolio: AiPortfolio) => {
+        setSelectedPortfolio(portfolio);
+        setShowInvestModal(true);
+    };
 
     // A small, reusable chart for the watchlist
     const MiniChart: React.FC<{ data: { value: number }[], isPositive: boolean }> = ({ data, isPositive }) => {
@@ -23,8 +36,8 @@ const HomeScreen: React.FC<NavigationProps> = ({ navigate }) => {
                     <AreaChart data={data} margin={{ top: 2, right: 2, bottom: 2, left: 2 }}>
                         <defs>
                             <linearGradient id={`mini-chart-gradient-${isPositive}`} x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor={color} stopOpacity={0.3}/>
-                                <stop offset="95%" stopColor={color} stopOpacity={0}/>
+                                <stop offset="5%" stopColor={color} stopOpacity={0.3} />
+                                <stop offset="95%" stopColor={color} stopOpacity={0} />
                             </linearGradient>
                         </defs>
                         <Area
@@ -46,12 +59,12 @@ const HomeScreen: React.FC<NavigationProps> = ({ navigate }) => {
         const chartData = Array.from({ length: 20 }, () => ({
             value: stock.price * (1 + (Math.random() - 0.5) * 0.1)
         }));
-        
+
         const isPositive = stock.changePercent >= 0;
 
         return (
-            <button 
-                onClick={() => navigate(SCREENS.STOCK_DETAIL, stock)} 
+            <button
+                onClick={() => navigate(SCREENS.STOCK_DETAIL, stock)}
                 className="flex items-center w-full p-4 bg-white rounded-xl mb-3 transition-all hover:shadow-lg hover:scale-[1.02] border border-gray-100 shadow-sm"
             >
                 <img src={stock.logo} alt={stock.name} className="w-10 h-10 rounded-full mr-4" />
@@ -71,7 +84,7 @@ const HomeScreen: React.FC<NavigationProps> = ({ navigate }) => {
             </button>
         );
     };
-    
+
     // Create some gradients for the portfolio cards
     const portfolioGradients = [
         'from-blue-100 to-indigo-100',
@@ -80,40 +93,137 @@ const HomeScreen: React.FC<NavigationProps> = ({ navigate }) => {
         'from-yellow-100 to-orange-100',
     ];
 
-    const AiPortfolioCard: React.FC<{ portfolio: AiPortfolio, gradient: string }> = ({ portfolio, gradient }) => (
-        <div className={`w-72 flex-shrink-0 relative bg-gradient-to-br ${gradient} p-5 rounded-2xl shadow-md overflow-hidden group`}>
-             <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/20 rounded-full opacity-50 group-hover:scale-125 transition-transform duration-300"></div>
-            <h3 className="font-bold text-lg text-gray-800 relative z-10">{portfolio.name}</h3>
-            <p className="text-sm text-gray-600 mt-2 h-10 relative z-10">{portfolio.description}</p>
-            <div className="flex justify-between items-end mt-6 relative z-10">
-                <div>
-                    <p className="text-xs text-gray-500 font-medium">AVG. RETURN</p>
-                    <p className="font-bold text-xl text-positive">{portfolio.cagr.toFixed(1)}%</p>
+    const AiPortfolioCard: React.FC<{ portfolio: AiPortfolio, gradient: string }> = ({ portfolio, gradient }) => {
+        // Mock holdings for preview based on portfolio name
+        const mockPortfolioHoldings = {
+            'Global Robotics & AI': ['NVDA', 'GOOGL', 'MSFT'],
+            'Sustainable Energy Leaders': ['TSLA', 'ENPH', 'NEE'],
+            'Emerging Market Innovators': ['BABA', 'TSM', 'SE'],
+            'Global Dividend Payers': ['JNJ', 'PG', 'KO'],
+        };
+        const holdings = mockPortfolioHoldings[portfolio.name as keyof typeof mockPortfolioHoldings] || ['AAPL', 'MSFT', 'GOOGL'];
+
+        // Generate sparkline data
+        const sparklineData = Array.from({ length: 15 }, (_, i) => ({
+            value: 100 + Math.sin(i / 2) * 10 + Math.random() * 5 + (portfolio.cagr / 10) * i
+        }));
+
+        return (
+            <div className={`w-72 h-[300px] flex-shrink-0 relative bg-gradient-to-br ${gradient} p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.08),0_8px_24px_rgba(0,0,0,0.06)] overflow-hidden group flex flex-col`}>
+                {/* AI Watching Indicator */}
+                <div className="absolute top-2.5 right-2.5 flex items-center gap-1 px-2 py-0.5 bg-white/90 rounded-full backdrop-blur-sm">
+                    <span className="w-1.5 h-1.5 bg-positive rounded-full animate-pulse"></span>
+                    <span className="text-[9px] font-semibold text-gray-600 tracking-tight">AI Active</span>
                 </div>
-                 <div>
-                    <p className="text-xs text-gray-500 font-medium text-right">RISK</p>
-                    <p className="font-semibold text-gray-800 text-right">{portfolio.risk}</p>
+
+                <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/15 rounded-full opacity-50 group-hover:scale-125 transition-transform duration-300"></div>
+
+                {/* Title & Description */}
+                <h3 className="font-bold text-base text-gray-800 relative z-10 pr-16 leading-tight">{portfolio.name}</h3>
+                <p className="text-xs text-gray-500 mt-1.5 relative z-10 line-clamp-2 leading-relaxed min-h-[32px]">{portfolio.description}</p>
+
+                {/* Sparkline Chart */}
+                <div className="h-10 mt-3 relative z-10">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={sparklineData} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+                            <defs>
+                                <linearGradient id={`portfolio-gradient-${portfolio.id}`} x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#7C3AED" stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor="#7C3AED" stopOpacity={0} />
+                                </linearGradient>
+                            </defs>
+                            <Area
+                                type="monotone"
+                                dataKey="value"
+                                stroke="#7C3AED"
+                                strokeWidth={1.5}
+                                fill={`url(#portfolio-gradient-${portfolio.id})`}
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
                 </div>
+
+                {/* Holdings Preview */}
+                <div className="flex items-center gap-1 mt-3 relative z-10">
+                    <div className="flex -space-x-1.5">
+                        {holdings.map((ticker, i) => (
+                            <div key={ticker} className="w-5 h-5 rounded-full bg-white border border-white shadow-sm flex items-center justify-center text-[7px] font-bold text-gray-600">
+                                {ticker.slice(0, 2)}
+                            </div>
+                        ))}
+                    </div>
+                    <span className="text-[10px] text-gray-500 ml-1.5 font-medium">{holdings.join(', ')}</span>
+                </div>
+
+                {/* Spacer to push content down */}
+                <div className="flex-1"></div>
+
+                {/* Stats Row */}
+                <div className="flex justify-between items-end relative z-10 mb-3">
+                    <div>
+                        <p className="text-[10px] text-gray-500 font-semibold uppercase tracking-wide">Avg. Return</p>
+                        <p className="font-bold text-lg text-positive leading-tight">{portfolio.cagr.toFixed(1)}%</p>
+                    </div>
+                    <div className="text-right">
+                        <p className="text-[10px] text-gray-500 font-semibold uppercase tracking-wide">Risk</p>
+                        <p className={`font-bold text-sm ${portfolio.risk === 'Low' ? 'text-positive' : portfolio.risk === 'Medium' ? 'text-yellow-600' : 'text-orange-500'}`}>
+                            {portfolio.risk}
+                        </p>
+                    </div>
+                </div>
+
+                {/* Invest Now Button */}
+                <button
+                    onClick={() => handleInvestClick(portfolio)}
+                    className="w-full py-2 bg-primary text-white font-semibold text-xs rounded-xl shadow-sm hover:bg-primary-dark hover:shadow-md transition-all relative z-10 flex items-center justify-center gap-1"
+                >
+                    <SparklesIcon />
+                    Invest Now
+                </button>
             </div>
-        </div>
-    );
+        );
+    };
 
     return (
         <div className="bg-gray-100 min-h-full">
             <header className="bg-gradient-to-br from-primary to-primary-dark text-white p-6 rounded-b-[2.5rem] shadow-2xl shadow-primary/30">
                 <div className="flex justify-between items-center">
                     <div>
-                        <h1 className="text-sm font-medium text-white/70">Portfolio Value</h1>
-                        <p className="text-4xl font-bold mt-1">${totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                        <div className="flex items-center gap-2">
+                            <h1 className="text-sm font-medium text-white/70">Portfolio Value</h1>
+                            <button
+                                onClick={() => setShowINR(!showINR)}
+                                className="text-xs px-2 py-0.5 bg-white/20 rounded-full hover:bg-white/30 transition"
+                            >
+                                {showINR ? 'INR' : 'USD'}
+                            </button>
+                        </div>
+                        {showINR ? (
+                            <>
+                                <p className="text-4xl font-bold mt-1">₹{totalValueINR.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</p>
+                                <p className="text-xs text-white/60 mt-0.5">${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD</p>
+                            </>
+                        ) : (
+                            <>
+                                <p className="text-4xl font-bold mt-1">${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                <p className="text-xs text-white/60 mt-0.5">≈ ₹{totalValueINR.toLocaleString('en-IN', { maximumFractionDigits: 0 })} INR</p>
+                            </>
+                        )}
                     </div>
                     <div className="w-12 h-12 bg-white/20 rounded-full">
-                         <img src="https://picsum.photos/100" alt="User" className="w-12 h-12 rounded-full"/>
+                        <img src="https://picsum.photos/100" alt="User" className="w-12 h-12 rounded-full" />
                     </div>
                 </div>
-                <div className="mt-4">
+                <div className="mt-4 flex items-center justify-between">
                     <span className="inline-flex items-center font-semibold bg-white/10 backdrop-blur-sm border border-white/20 px-3 py-1.5 rounded-full text-sm">
                         {totalGain >= 0 ? <ArrowUpIcon /> : <ArrowDownIcon />}
-                        <span className="ml-2">${totalGain.toFixed(2)} ({totalGainPercent.toFixed(2)}%) Today</span>
+                        <span className="ml-2">{showINR ? `₹${totalGainINR.toFixed(0)}` : `$${totalGain.toFixed(2)}`} ({totalGainPercent.toFixed(2)}%) Today</span>
+                    </span>
+                    <span className="inline-flex items-center text-xs font-medium text-white/80 bg-white/10 px-2 py-1 rounded-full">
+                        <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        SIPC
                     </span>
                 </div>
             </header>
@@ -121,10 +231,10 @@ const HomeScreen: React.FC<NavigationProps> = ({ navigate }) => {
             <div className="p-4 space-y-8">
                 <section>
                     <div className="flex justify-between items-center mb-4">
-                         <h2 className="text-xl font-bold text-gray-800">AI Insights</h2>
-                         <button onClick={() => navigate(SCREENS.AI_INSIGHTS)} className="text-sm font-semibold text-primary flex items-center">
+                        <h2 className="text-xl font-bold text-gray-800">AI Insights</h2>
+                        <button onClick={() => navigate(SCREENS.AI_INSIGHTS)} className="text-sm font-semibold text-primary flex items-center">
                             See All <ChevronRightIcon />
-                         </button>
+                        </button>
                     </div>
                     <div className="p-5 bg-gradient-to-tr from-secondary to-white rounded-2xl border border-primary/10 shadow-sm relative overflow-hidden">
                         <div className="absolute top-0 right-0 text-primary/10">
@@ -143,8 +253,8 @@ const HomeScreen: React.FC<NavigationProps> = ({ navigate }) => {
                 </section>
 
                 <section>
-                     <h2 className="text-xl font-bold text-gray-800 mb-4">AI-Managed Portfolios</h2>
-                     <div className="flex overflow-x-auto space-x-4 -mx-4 px-4 pb-2">
+                    <h2 className="text-xl font-bold text-gray-800 mb-4">AI-Managed Portfolios</h2>
+                    <div className="flex overflow-x-auto space-x-4 -mx-4 px-4 pb-2">
                         {mockAiPortfolios.map((p, i) => <AiPortfolioCard key={p.id} portfolio={p} gradient={portfolioGradients[i % portfolioGradients.length]} />)}
                     </div>
                 </section>
@@ -161,6 +271,59 @@ const HomeScreen: React.FC<NavigationProps> = ({ navigate }) => {
                     </div>
                 </section>
             </div>
+
+            {/* Investment Modal */}
+            {showInvestModal && selectedPortfolio && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center backdrop-blur-sm">
+                    <div className="bg-white w-full max-w-md rounded-t-3xl p-6 animate-slideUp">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-xl font-bold text-gray-900">Invest in "{selectedPortfolio.name}"</h3>
+                            <button onClick={() => setShowInvestModal(false)} className="text-gray-400 text-2xl">×</button>
+                        </div>
+
+                        <div className="mb-6">
+                            <label className="text-sm text-gray-600 mb-2 block">Investment Amount</label>
+                            <div className="relative">
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span>
+                                <input
+                                    type="number"
+                                    value={investAmount}
+                                    onChange={(e) => setInvestAmount(e.target.value)}
+                                    className="w-full pl-10 pr-4 py-4 text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none"
+                                />
+                            </div>
+                            <p className="text-sm text-gray-500 mt-2">
+                                ≈ ₹{(parseFloat(investAmount || '0') * USD_TO_INR).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                            </p>
+                        </div>
+
+                        {/* Portfolio Info */}
+                        <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                            <div className="flex justify-between items-center mb-3">
+                                <span className="text-sm font-medium text-gray-600">Expected Return</span>
+                                <span className="font-bold text-positive">{selectedPortfolio.cagr.toFixed(1)}% avg/year</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm font-medium text-gray-600">Risk Level</span>
+                                <span className={`font-semibold ${selectedPortfolio.risk === 'Low' ? 'text-positive' : selectedPortfolio.risk === 'Medium' ? 'text-yellow-600' : 'text-orange-500'}`}>
+                                    {selectedPortfolio.risk}
+                                </span>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => {
+                                setShowInvestModal(false);
+                                // Could navigate to success screen or show confirmation
+                            }}
+                            className="w-full py-4 bg-positive text-white font-bold rounded-xl text-lg"
+                        >
+                            Confirm Investment
+                        </button>
+                        <p className="text-xs text-gray-400 text-center mt-3">AI will manage your investment automatically</p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
