@@ -225,14 +225,14 @@ const AiAssistantScreen: React.FC<NavigationProps> = ({ navigate }) => {
         return responses;
     };
 
-    const handleSend = () => {
-        if (!input.trim()) return;
+    const handleSend = (text: string = input) => {
+        if (!text.trim()) return;
 
         const userMessage: AIMessage = {
             id: generateId(),
             type: 'text',
             sender: 'user',
-            content: input,
+            content: text,
         };
 
         setMessages(prev => [...prev, userMessage]);
@@ -242,9 +242,13 @@ const AiAssistantScreen: React.FC<NavigationProps> = ({ navigate }) => {
         // Simulate AI thinking
         setTimeout(() => {
             setIsTyping(false);
-            const aiResponses = processAIResponse(input);
+            const aiResponses = processAIResponse(text);
             setMessages(prev => [...prev, ...aiResponses]);
         }, 1200 + Math.random() * 800);
+    };
+
+    const handleSuggestionClick = (prompt: string) => {
+        handleSend(prompt);
     };
 
     const handleTradeConfirm = () => {
@@ -421,7 +425,7 @@ const AiAssistantScreen: React.FC<NavigationProps> = ({ navigate }) => {
                     {suggestionPrompts.map((prompt) => (
                         <button
                             key={prompt}
-                            onClick={() => setInput(prompt)}
+                            onClick={() => handleSuggestionClick(prompt)}
                             className="flex-shrink-0 px-3 py-1.5 text-xs font-medium text-primary bg-secondary rounded-full hover:bg-primary hover:text-white transition-all"
                         >
                             {prompt}
@@ -440,7 +444,7 @@ const AiAssistantScreen: React.FC<NavigationProps> = ({ navigate }) => {
                         className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
                     />
                     <button
-                        onClick={handleSend}
+                        onClick={() => handleSend()}
                         disabled={!input.trim()}
                         className="p-3 bg-gradient-to-br from-primary to-primary-dark text-white rounded-full shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     >

@@ -183,13 +183,19 @@ const RecommendedStocksScreen: React.FC<RecommendedStocksScreenProps> = ({ navig
             </div>
 
             {/* Invest in This Idea CTA - Fixed at bottom */}
-            <div className="fixed bottom-16 left-0 right-0 w-full max-w-md mx-auto p-4 bg-gradient-to-t from-white via-white to-transparent">
+            <div className="fixed bottom-24 left-0 right-0 w-full max-w-md mx-auto p-4 bg-gradient-to-t from-white via-white to-transparent flex flex-col gap-3">
                 <button
                     onClick={() => setShowInvestModal(true)}
                     className="w-full py-4 bg-gradient-to-r from-primary to-primary-dark text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
                 >
                     <SparklesIcon />
                     <span>Invest in This Idea</span>
+                </button>
+                <button
+                    onClick={() => navigate(SCREENS.AI_INSIGHTS)}
+                    className="w-full py-2 text-primary font-semibold text-sm text-center"
+                >
+                    Explore Other Themes
                 </button>
             </div>
 

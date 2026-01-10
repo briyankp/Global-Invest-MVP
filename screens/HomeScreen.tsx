@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import TrustSafetyModal from '../components/TrustSafetyModal';
 import type { NavigationProps, Stock, AiPortfolio } from '../types';
 import { SCREENS } from '../constants';
 import { mockHoldings, mockWatchlist, mockAiPortfolios, mockAiInsights } from '../services/mockData';
@@ -12,6 +13,7 @@ const USD_TO_INR = 83.56;
 
 const HomeScreen: React.FC<NavigationProps> = ({ navigate }) => {
     const [showINR, setShowINR] = useState(false);
+    const [showTrustModal, setShowTrustModal] = useState(false);
     const [selectedPortfolio, setSelectedPortfolio] = useState<AiPortfolio | null>(null);
     const [showInvestModal, setShowInvestModal] = useState(false);
     const [investAmount, setInvestAmount] = useState('1000');
@@ -187,15 +189,16 @@ const HomeScreen: React.FC<NavigationProps> = ({ navigate }) => {
     return (
         <div className="bg-gray-100 min-h-full">
             <header className="bg-gradient-to-br from-primary to-primary-dark text-white p-6 rounded-b-[2.5rem] shadow-2xl shadow-primary/30">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-start mb-6">
                     <div>
-                        <div className="flex items-center gap-2">
-                            <h1 className="text-sm font-medium text-white/70">Portfolio Value</h1>
+                        <div className="flex items-center gap-3">
+                            <p className="text-sm font-medium text-white/80">Portfolio Value</p>
                             <button
                                 onClick={() => setShowINR(!showINR)}
-                                className="text-xs px-2 py-0.5 bg-white/20 rounded-full hover:bg-white/30 transition"
+                                className="flex items-center bg-white/10 backdrop-blur-md rounded-full p-1 border border-white/20 transition-all hover:bg-white/20"
                             >
-                                {showINR ? 'INR' : 'USD'}
+                                <span className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${!showINR ? 'bg-white text-primary shadow-sm' : 'text-white/70'}`}>USD</span>
+                                <span className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${showINR ? 'bg-white text-primary shadow-sm' : 'text-white/70'}`}>INR</span>
                             </button>
                         </div>
                         {showINR ? (
@@ -210,23 +213,30 @@ const HomeScreen: React.FC<NavigationProps> = ({ navigate }) => {
                             </>
                         )}
                     </div>
-                    <div className="w-12 h-12 bg-white/20 rounded-full">
-                        <img src="https://picsum.photos/100" alt="User" className="w-12 h-12 rounded-full" />
+                    <div className="w-12 h-12 bg-white/20 rounded-full border border-white/10">
+                        <img src="https://picsum.photos/100" alt="User" className="w-12 h-12 rounded-full p-0.5" />
                     </div>
                 </div>
                 <div className="mt-4 flex items-center justify-between">
-                    <span className="inline-flex items-center font-semibold bg-white/10 backdrop-blur-sm border border-white/20 px-3 py-1.5 rounded-full text-sm">
+                    <span className="inline-flex items-center font-semibold bg-white/10 backdrop-blur-sm border border-white/20 px-3 py-1.5 rounded-full text-xs">
                         {totalGain >= 0 ? <ArrowUpIcon /> : <ArrowDownIcon />}
-                        <span className="ml-2">{showINR ? `₹${totalGainINR.toFixed(0)}` : `$${totalGain.toFixed(2)}`} ({totalGainPercent.toFixed(2)}%) Today</span>
+                        <span className="ml-1.5">{showINR ? `₹${totalGainINR.toFixed(0)}` : `$${totalGain.toFixed(2)}`} ({totalGainPercent.toFixed(2)}%)</span>
                     </span>
-                    <span className="inline-flex items-center text-xs font-medium text-white/80 bg-white/10 px-2 py-1 rounded-full">
-                        <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+
+                    <button
+                        onClick={() => setShowTrustModal(true)}
+                        className="inline-flex items-center text-xs font-bold text-white bg-green-500/20 border border-green-400/30 px-3 py-1.5 rounded-full hover:bg-green-500/30 transition-all"
+                    >
+                        <svg className="w-3.5 h-3.5 mr-1.5 text-green-300" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
-                        SIPC
-                    </span>
+                        LRS Compliant
+                    </button>
                 </div>
             </header>
+
+            {/* Trust Modal */}
+            {showTrustModal && <TrustSafetyModal onClose={() => setShowTrustModal(false)} />}
 
             <div className="p-4 space-y-8">
                 <section>

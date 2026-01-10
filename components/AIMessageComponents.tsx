@@ -21,7 +21,7 @@ export interface AIMessage {
         tradeAction?: 'buy' | 'sell';
         shares?: number;
         totalValue?: number;
-        portfolioData?: { name: string; value: number; change: number }[];
+        portfolioData?: { name: string; value: number; allocation: number }[];
         insightTitle?: string;
         confidence?: number;
     };
@@ -137,8 +137,8 @@ export const AITradeConfirm: React.FC<TradeConfirmProps> = ({ stock, action, sha
                 <button
                     onClick={onConfirm}
                     className={`flex-1 py-2.5 text-sm font-bold text-white rounded-lg transition ${action === 'buy'
-                            ? 'bg-positive hover:bg-green-600'
-                            : 'bg-negative hover:bg-red-600'
+                        ? 'bg-positive hover:bg-green-600'
+                        : 'bg-negative hover:bg-red-600'
                         }`}
                 >
                     {action === 'buy' ? 'Buy Now' : 'Sell Now'}
