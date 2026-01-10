@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { NavigationProps, Stock, AiInsight } from '../types';
 import { SCREENS } from '../constants';
 import ChevronLeftIcon from '../components/icons/ChevronLeftIcon';
+import ChevronRightIcon from '../components/icons/ChevronRightIcon';
 import LightbulbIcon from '../components/icons/LightbulbIcon';
 import ClockIcon from '../components/icons/ClockIcon';
 import CalendarIcon from '../components/icons/CalendarIcon';
@@ -144,13 +145,21 @@ const RecommendedStocksScreen: React.FC<RecommendedStocksScreenProps> = ({ navig
                 showBack={true}
                 onBack={() => navigate(SCREENS.AI_INSIGHTS)}
                 rightElement={
-                    <button
-                        onClick={() => setShowInvestModal(true)}
-                        className="bg-white/20 hover:bg-white/30 text-white font-bold text-xs px-4 py-1.5 rounded-full backdrop-blur-md transition-all border border-white/20 shadow-sm flex items-center gap-1.5"
-                    >
-                        <SparklesIcon />
-                        Invest
-                    </button>
+                    <div className="flex flex-col items-end gap-2">
+                        <button
+                            onClick={() => setShowInvestModal(true)}
+                            className="bg-white/20 hover:bg-white/30 text-white font-bold text-xs px-4 py-1.5 rounded-full backdrop-blur-md transition-all border border-white/20 shadow-sm flex items-center gap-1.5"
+                        >
+                            <SparklesIcon />
+                            Invest
+                        </button>
+                        <button
+                            onClick={() => navigate(SCREENS.AI_INSIGHTS)}
+                            className="text-[10px] text-white/70 font-medium hover:text-white transition-colors flex items-center gap-1"
+                        >
+                            Explore Themes <ChevronRightIcon className="w-3 h-3" />
+                        </button>
+                    </div>
                 }
             />
 
@@ -186,13 +195,6 @@ const RecommendedStocksScreen: React.FC<RecommendedStocksScreenProps> = ({ navig
                     )}
                 </section>
 
-                {/* Explore Other Themes Button */}
-                <button
-                    onClick={() => navigate(SCREENS.AI_INSIGHTS)}
-                    className="w-full py-3 mt-4 bg-white border border-primary/20 text-primary font-bold rounded-xl text-sm hover:bg-primary/5 transition-all text-center shadowing-sm"
-                >
-                    Explore More Themes
-                </button>
             </div>
 
             {/* Investment Modal */}

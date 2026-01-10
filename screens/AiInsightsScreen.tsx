@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { NavigationProps, AiInsight } from '../types';
 import { SCREENS } from '../constants';
 import { mockAiInsights } from '../services/mockData';
@@ -22,6 +22,16 @@ const PERSONALIZATION_TAGS = [
 
 const AiInsightsScreen: React.FC<NavigationProps> = ({ navigate }) => {
     const [activeCategory, setActiveCategory] = useState('for_you');
+    const [displayInsights, setDisplayInsights] = useState(mockAiInsights);
+
+    useEffect(() => {
+        if (activeCategory === 'trending') {
+            const shuffled = [...mockAiInsights].sort(() => Math.random() - 0.5);
+            setDisplayInsights(shuffled);
+        } else {
+            setDisplayInsights(mockAiInsights);
+        }
+    }, [activeCategory]);
 
     // Calculate confidence for each insight (mock)
     const getConfidence = (index: number) => 85 - (index * 8) + Math.floor(Math.random() * 10);
@@ -159,7 +169,7 @@ const AiInsightsScreen: React.FC<NavigationProps> = ({ navigate }) => {
                     {mockAiInsights.length} Opportunities Identified
                 </p>
 
-                {mockAiInsights.map((insight, index) => (
+                {displayInsights.map((insight, index) => (
                     <InsightCard key={insight.id} insight={insight} index={index} />
                 ))}
             </div>
