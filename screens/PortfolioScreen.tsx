@@ -104,8 +104,9 @@ const PortfolioScreen: React.FC<NavigationProps> = ({ navigate }) => {
             <ScreenHeader
                 title="My Portfolio"
                 rightElement={
-                    <div className="w-10 h-10 bg-white/20 rounded-full border border-white/10">
-                        <img src="https://picsum.photos/100" alt="User" className="w-10 h-10 rounded-full p-0.5" />
+                    <div className="bg-white/10 backdrop-blur-md rounded-full p-0.5 border border-white/20 flex">
+                        <span className="px-2 py-1 rounded-full text-[10px] font-bold text-white/70">Lite</span>
+                        <span className="px-2 py-1 rounded-full text-[10px] font-bold bg-white text-primary shadow-sm">Pro</span>
                     </div>
                 }
             >
@@ -224,6 +225,27 @@ const PortfolioScreen: React.FC<NavigationProps> = ({ navigate }) => {
                         </ResponsiveContainer>
                     </div>
                 </div>
+            </div>
+
+            {/* Portfolio Health Check Card */}
+            <div className="mx-4 mb-3">
+                <button
+                    onClick={() => navigate(SCREENS.AI_ASSISTANT, { autoMessage: 'Portfolio Health Check', timestamp: Date.now() })}
+                    className="w-full bg-gradient-to-r from-secondary to-purple-50 rounded-xl p-3 border border-primary/10 hover:border-primary/30 transition-all flex items-center gap-3 shadow-sm"
+                >
+                    <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div className="flex-1 text-left">
+                        <h4 className="font-bold text-gray-800 text-sm">Portfolio Health Check</h4>
+                        <p className="text-[10px] text-gray-500">AI analysis of diversification, risk & recommendations</p>
+                    </div>
+                    <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
             </div>
 
             <div className="flex mx-4 bg-gray-100 p-1 rounded-xl mb-2">

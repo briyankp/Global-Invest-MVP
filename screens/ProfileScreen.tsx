@@ -1,14 +1,16 @@
 import React from 'react';
+import type { NavigationProps } from '../types';
+import { SCREENS } from '../constants';
 import ChevronRightIcon from '../components/icons/ChevronRightIcon';
 import ScreenHeader from '../components/ScreenHeader';
 
-interface ProfileScreenProps {
+interface ProfileScreenProps extends NavigationProps {
     onLogout: () => void;
     onInstall: () => void;
     canInstall: boolean;
 }
 
-const ProfileScreen: React.FC<ProfileScreenProps> = ({ onLogout, onInstall, canInstall }) => {
+const ProfileScreen: React.FC<ProfileScreenProps> = ({ onLogout, onInstall, canInstall, navigate }) => {
 
     // Inline Icons for Profile
     const MobileIcon = () => (
@@ -88,21 +90,27 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onLogout, onInstall, canI
                 <section>
                     <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Account</h3>
                     <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
-                        <MenuItem icon={<UserIcon />} label="Personal Information" />
+                        <MenuItem icon={<UserIcon />} label="Personal Information" onClick={() => navigate(SCREENS.PERSONAL_INFO)} />
                         <div className="h-[1px] bg-gray-50 mx-12"></div>
-                        <MenuItem icon={<BankIcon />} label="Bank & Auto-Pay" />
+                        <MenuItem icon={<BankIcon />} label="Bank & Auto-Pay" onClick={() => navigate(SCREENS.BANK_AUTOPAY)} />
                         <div className="h-[1px] bg-gray-50 mx-12"></div>
-                        <MenuItem icon={<DocumentIcon />} label="Reports & Statements" />
+                        <MenuItem icon={<DocumentIcon />} label="Reports & Statements" onClick={() => navigate(SCREENS.REPORTS)} />
                     </div>
                 </section>
 
                 <div className="space-y-2 mt-6">
                     <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider px-2 mb-1">Settings & Support</h2>
-                    <MenuItem label="Security (Password & Biometrics)" />
-                    <MenuItem label="Notifications" />
-                    <MenuItem label="Help Center / FAQs" />
-                    <MenuItem label="Contact Support" />
-                    <MenuItem label="Generate Tax Report" />
+                    <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
+                        <MenuItem label="Security (Password & Biometrics)" onClick={() => navigate(SCREENS.SECURITY)} />
+                        <div className="h-[1px] bg-gray-50 mx-4"></div>
+                        <MenuItem label="Notifications" onClick={() => navigate(SCREENS.NOTIFICATIONS)} />
+                        <div className="h-[1px] bg-gray-50 mx-4"></div>
+                        <MenuItem label="Help Center / FAQs" onClick={() => navigate(SCREENS.HELP_CENTER)} />
+                        <div className="h-[1px] bg-gray-50 mx-4"></div>
+                        <MenuItem label="Contact Support" onClick={() => navigate(SCREENS.CONTACT_SUPPORT)} />
+                        <div className="h-[1px] bg-gray-50 mx-4"></div>
+                        <MenuItem label="Generate Tax Report" onClick={() => navigate(SCREENS.TAX_REPORT)} />
+                    </div>
                 </div>
 
                 <div className="mt-8">

@@ -18,6 +18,15 @@ import RegistrationScreen from './screens/RegistrationScreen';
 import KycPanAadhaarScreen from './screens/KycPanAadhaarScreen';
 import KycDigiLockerScreen from './screens/KycDigiLockerScreen';
 import KycSuccessScreen from './screens/KycSuccessScreen';
+// Profile sub-screens
+import PersonalInfoScreen from './screens/PersonalInfoScreen';
+import BankAutoPayScreen from './screens/BankAutoPayScreen';
+import ReportsScreen from './screens/ReportsScreen';
+import SecurityScreen from './screens/SecurityScreen';
+import NotificationsScreen from './screens/NotificationsScreen';
+import HelpCenterScreen from './screens/HelpCenterScreen';
+import ContactSupportScreen from './screens/ContactSupportScreen';
+import TaxReportScreen from './screens/TaxReportScreen';
 
 const App: React.FC = () => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -104,15 +113,32 @@ const App: React.FC = () => {
             case SCREENS.PORTFOLIO:
                 return <PortfolioScreen navigate={navigate} />;
             case SCREENS.AI_ASSISTANT:
-                return <AiAssistantScreen navigate={navigate} />;
+                return <AiAssistantScreen navigate={navigate} payload={navigationPayload} />;
             case SCREENS.PROFILE:
-                return <ProfileScreen onLogout={handleLogout} onInstall={handleInstallClick} canInstall={!!deferredPrompt} />;
+                return <ProfileScreen onLogout={handleLogout} onInstall={handleInstallClick} canInstall={!!deferredPrompt} navigate={navigate} />;
             case SCREENS.STOCK_DETAIL:
                 return <StockDetailScreen stock={navigationPayload as Stock} navigate={navigate} />;
             case SCREENS.AI_INSIGHTS:
                 return <AiInsightsScreen navigate={navigate} />;
             case SCREENS.RECOMMENDED_STOCKS:
                 return <RecommendedStocksScreen payload={navigationPayload} navigate={navigate} />;
+            // Profile sub-screens
+            case SCREENS.PERSONAL_INFO:
+                return <PersonalInfoScreen navigate={navigate} />;
+            case SCREENS.BANK_AUTOPAY:
+                return <BankAutoPayScreen navigate={navigate} />;
+            case SCREENS.REPORTS:
+                return <ReportsScreen navigate={navigate} />;
+            case SCREENS.SECURITY:
+                return <SecurityScreen navigate={navigate} />;
+            case SCREENS.NOTIFICATIONS:
+                return <NotificationsScreen navigate={navigate} />;
+            case SCREENS.HELP_CENTER:
+                return <HelpCenterScreen navigate={navigate} />;
+            case SCREENS.CONTACT_SUPPORT:
+                return <ContactSupportScreen navigate={navigate} />;
+            case SCREENS.TAX_REPORT:
+                return <TaxReportScreen navigate={navigate} />;
             default:
                 return <HomeScreen navigate={navigate} />;
         }

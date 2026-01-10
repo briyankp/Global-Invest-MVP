@@ -24,6 +24,7 @@ export interface AIMessage {
         portfolioData?: { name: string; value: number; allocation: number }[];
         insightTitle?: string;
         confidence?: number;
+        insight?: any; // Full insight object for navigation
     };
     timestamp?: Date;
 }

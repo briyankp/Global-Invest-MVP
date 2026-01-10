@@ -197,8 +197,9 @@ const HomeScreen: React.FC<NavigationProps> = ({ navigate }) => {
             <ScreenHeader
                 title="Portfolio Value"
                 rightElement={
-                    <div className="w-10 h-10 bg-white/20 rounded-full border border-white/10">
-                        <img src="https://picsum.photos/100" alt="User" className="w-10 h-10 rounded-full p-0.5" />
+                    <div className="bg-white/10 backdrop-blur-md rounded-full p-0.5 border border-white/20 flex">
+                        <span className="px-2 py-1 rounded-full text-[10px] font-bold text-white/70">Lite</span>
+                        <span className="px-2 py-1 rounded-full text-[10px] font-bold bg-white text-primary shadow-sm">Pro</span>
                     </div>
                 }
             >
