@@ -121,7 +121,7 @@ const App: React.FC = () => {
     const showNav = isAuthenticated && isOnboardingComplete;
 
     return (
-        <div className="h-screen w-screen bg-white font-sans flex flex-col items-center">
+        <div className="h-[100dvh] w-screen bg-white font-sans flex flex-col items-center">
             <div className="relative w-full max-w-md h-full flex flex-col bg-gray-50 shadow-2xl">
                 <main ref={mainRef} className="flex-1 overflow-y-auto pb-20">
                     {renderContent()}
