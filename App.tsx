@@ -24,6 +24,29 @@ const App: React.FC = () => {
     const [isOnboardingComplete, setIsOnboardingComplete] = useState<boolean>(false);
     const [currentScreen, setCurrentScreen] = useState<Screen>(SCREENS.LOGIN);
     const [navigationPayload, setNavigationPayload] = useState<any>(null);
+    const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+    React.useEffect(() => {
+        const handleBeforeInstallPrompt = (e: any) => {
+            e.preventDefault();
+            setDeferredPrompt(e);
+        };
+
+        window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+        return () => {
+            window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+        };
+    }, []);
+
+    const handleInstallClick = async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            setDeferredPrompt(null);
+        }
+    };
 
     const navigate = useCallback((screen: Screen, payload: any = null) => {
         setCurrentScreen(screen);
@@ -83,7 +106,7 @@ const App: React.FC = () => {
             case SCREENS.AI_ASSISTANT:
                 return <AiAssistantScreen navigate={navigate} />;
             case SCREENS.PROFILE:
-                return <ProfileScreen onLogout={handleLogout} />;
+                return <ProfileScreen onLogout={handleLogout} onInstall={handleInstallClick} canInstall={!!deferredPrompt} />;
             case SCREENS.STOCK_DETAIL:
                 return <StockDetailScreen stock={navigationPayload as Stock} navigate={navigate} />;
             case SCREENS.AI_INSIGHTS:

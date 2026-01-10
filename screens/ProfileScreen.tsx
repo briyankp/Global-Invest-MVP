@@ -4,11 +4,21 @@ import ScreenHeader from '../components/ScreenHeader';
 
 interface ProfileScreenProps {
     onLogout: () => void;
+    onInstall: () => void;
+    canInstall: boolean;
 }
 
-const ProfileScreen: React.FC<ProfileScreenProps> = ({ onLogout }) => {
+const ProfileScreen: React.FC<ProfileScreenProps> = ({ onLogout, onInstall, canInstall }) => {
 
     // Inline Icons for Profile
+    const MobileIcon = () => (
+        <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>
+    );
+
+    // ... existing icons ...
+
     const UserIcon = () => (
         <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -64,11 +74,21 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onLogout }) => {
                 </div>
             </ScreenHeader>
 
-            <div className="p-4 space-y-4 relative z-20"> {/* Changed space-y-2 -mt-4 to space-y-4 */}
-                <section> {/* Changed div to section */}
-                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Account</h3> {/* Changed h2 to h3 and adjusted classes */}
-                    <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100"> {/* Added new div for styling */}
-                        <MenuItem icon={<UserIcon />} label="Personal Information" /> {/* Changed label and added icon */}
+            <div className="p-4 space-y-4 relative z-20">
+                {/* Install App Section - Only shows if installable */}
+                {canInstall && (
+                    <section>
+                        <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">App Experience</h3>
+                        <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
+                            <MenuItem icon={<MobileIcon />} label="Install App" badge="Free" onClick={onInstall} />
+                        </div>
+                    </section>
+                )}
+
+                <section>
+                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Account</h3>
+                    <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
+                        <MenuItem icon={<UserIcon />} label="Personal Information" />
                         <div className="h-[1px] bg-gray-50 mx-12"></div>
                         <MenuItem icon={<BankIcon />} label="Bank & Auto-Pay" />
                         <div className="h-[1px] bg-gray-50 mx-12"></div>
