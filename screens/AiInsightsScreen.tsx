@@ -10,7 +10,6 @@ import ChevronRightIcon from '../components/icons/ChevronRightIcon';
 const CATEGORIES = [
     { id: 'for_you', label: 'For You', icon: '✨' },
     { id: 'trending', label: 'Trending', icon: '🔥' },
-    { id: 'events', label: 'Global Events', icon: '🌍' },
 ];
 
 // Personalization tags based on user interests
@@ -40,104 +39,111 @@ const AiInsightsScreen: React.FC<NavigationProps> = ({ navigate }) => {
         const personalizationTag = PERSONALIZATION_TAGS[index % PERSONALIZATION_TAGS.length];
 
         return (
-            <div className="bg-white p-5 rounded-2xl mb-4 border border-gray-100 shadow-sm hover:shadow-md transition-all">
+            <button
+                onClick={() => navigate(SCREENS.RECOMMENDED_STOCKS, insight)}
+                className="w-full bg-white p-3 rounded-xl mb-3 border border-gray-100 shadow-sm hover:shadow-md transition-all text-left group"
+            >
                 {/* Personalization Badge */}
-                <div className="flex items-center gap-2 mb-3">
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-secondary text-primary text-xs font-medium rounded-full">
-                        <SparklesIcon />
-                        {personalizationTag}
-                    </span>
-                    {timeSensitive && (
-                        <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full ${timeSensitive.urgent
+                <div className="flex justify-between items-start mb-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-secondary text-primary text-[10px] font-medium rounded-full">
+                            <SparklesIcon />
+                            {personalizationTag}
+                        </span>
+                        {timeSensitive && (
+                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded-full ${timeSensitive.urgent
                                 ? 'bg-red-50 text-red-600 animate-pulse'
                                 : 'bg-yellow-50 text-yellow-600'
-                            }`}>
-                            ⏰ {timeSensitive.label}
-                        </span>
-                    )}
+                                }`}>
+                                ⏰ {timeSensitive.label}
+                            </span>
+                        )}
+                    </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-dark rounded-xl flex items-center justify-center text-white flex-shrink-0">
+                    <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center text-white flex-shrink-0 mt-1">
                         <SparklesIcon />
                     </div>
                     <div className="flex-1">
-                        <h3 className="font-bold text-gray-800 text-lg">{insight.title}</h3>
-                        <p className="text-sm text-gray-600 mt-1 line-clamp-2">{insight.content}</p>
+                        <div className="flex justify-between items-start">
+                            <h3 className="font-bold text-gray-800 text-sm leading-tight pr-4">{insight.title}</h3>
+                            <ChevronRightIcon />
+                        </div>
+                        <p className="text-xs text-gray-600 mt-1 line-clamp-2 leading-relaxed">{insight.content}</p>
 
                         {/* Confidence Bar */}
-                        <div className="mt-4">
-                            <div className="flex justify-between items-center mb-1.5">
-                                <span className="text-xs text-gray-500">AI Confidence</span>
-                                <span className="text-xs font-bold text-gray-700">{confidence}%</span>
-                            </div>
-                            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                <div
-                                    className={`h-full rounded-full transition-all duration-700 ${confidence >= 80 ? 'bg-positive' :
+                        <div className="mt-2.5 flex items-center gap-3">
+                            <div className="flex-1">
+                                <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                    <div
+                                        className={`h-full rounded-full transition-all duration-700 ${confidence >= 80 ? 'bg-positive' :
                                             confidence >= 60 ? 'bg-yellow-500' : 'bg-orange-500'
-                                        }`}
-                                    style={{ width: `${confidence}%` }}
-                                />
+                                            }`}
+                                        style={{ width: `${confidence}%` }}
+                                    />
+                                </div>
                             </div>
+                            <span className="text-[10px] font-bold text-gray-700 whitespace-nowrap">{confidence}% Confidence</span>
                         </div>
 
                         {/* Related Stocks Preview */}
-                        <div className="flex items-center gap-2 mt-3">
-                            <div className="flex -space-x-2">
+                        <div className="flex items-center gap-1.5 mt-2.5">
+                            <div className="flex -space-x-1.5">
                                 {insight.relatedStocks.slice(0, 3).map((stock) => (
                                     <img
                                         key={stock.ticker}
                                         src={stock.logo}
                                         alt={stock.ticker}
-                                        className="w-7 h-7 rounded-full border-2 border-white shadow-sm"
+                                        className="w-5 h-5 rounded-full border border-white shadow-sm"
                                     />
                                 ))}
                             </div>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-[10px] text-gray-500 ml-1 font-medium">
                                 {insight.relatedStocks.map(s => s.ticker).join(', ')}
                             </span>
                         </div>
-
-                        {/* CTA Button */}
-                        <button
-                            onClick={() => navigate(SCREENS.RECOMMENDED_STOCKS, insight)}
-                            className="mt-4 w-full py-2.5 bg-gradient-to-r from-primary to-primary-dark text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:shadow-lg transition-all"
-                        >
-                            Explore This Idea
-                            <ChevronRightIcon />
-                        </button>
                     </div>
                 </div>
-            </div>
+            </button>
         );
     };
 
     return (
-        <div className="min-h-full bg-gradient-to-b from-gray-50 to-white">
+        <div className="min-h-full bg-gray-50 pb-20">
             {/* Header */}
-            <header className="p-4 flex items-center bg-white/90 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-10">
-                <button onClick={() => navigate(SCREENS.HOME)} className="mr-2 p-1">
+            <header className="p-4 flex flex-col justify-end min-h-[140px] bg-gradient-to-br from-primary to-primary-dark text-white shadow-lg sticky top-0 z-20">
+                <button
+                    onClick={() => navigate(SCREENS.HOME)}
+                    className="absolute top-4 left-4 p-2 bg-white/10 backdrop-blur-md rounded-full text-white hover:bg-white/20 transition-all z-30"
+                >
                     <ChevronLeftIcon />
                 </button>
-                <div className="flex-1">
-                    <h1 className="text-lg font-bold text-gray-900">AI Insights</h1>
-                    <p className="text-xs text-gray-500">Personalized for your portfolio</p>
-                </div>
-                <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center text-primary">
+                <div className="absolute top-0 right-0 p-3 opacity-10 pointer-events-none">
                     <SparklesIcon />
+                </div>
+
+                <div className="relative z-10 mt-auto">
+                    <div className="flex items-center gap-2 mb-1">
+                        <span className="inline-flex items-center justify-center p-1 bg-white/20 rounded-lg backdrop-blur-sm">
+                            <SparklesIcon />
+                        </span>
+                        <h1 className="text-2xl font-bold leading-none">AI Insights</h1>
+                    </div>
+                    <p className="text-xs text-white/70 line-clamp-1 max-w-[90%]">Personalized investment opportunities matching your profile</p>
                 </div>
             </header>
 
             {/* Category Tabs */}
-            <div className="px-4 pt-4 pb-2 sticky top-[73px] bg-gradient-to-b from-gray-50 to-gray-50/80 z-[5]">
+            <div className="bg-white border-b border-gray-100 py-2 px-3 sticky top-[140px] z-10 shadow-sm">
                 <div className="flex gap-2 overflow-x-auto scrollbar-hide">
                     {CATEGORIES.map((cat) => (
                         <button
                             key={cat.id}
                             onClick={() => setActiveCategory(cat.id)}
-                            className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === cat.id
-                                    ? 'bg-primary text-white shadow-md'
-                                    : 'bg-white text-gray-600 border border-gray-200 hover:border-primary/50'
+                            className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${activeCategory === cat.id
+                                ? 'bg-primary text-white shadow-sm'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                 }`}
                         >
                             <span className="mr-1">{cat.icon}</span>
@@ -148,10 +154,9 @@ const AiInsightsScreen: React.FC<NavigationProps> = ({ navigate }) => {
             </div>
 
             {/* Insights List */}
-            <div className="p-4">
-                {/* Active Insights Count */}
-                <p className="text-sm text-gray-500 mb-4">
-                    {mockAiInsights.length} insights for you today
+            <div className="p-3">
+                <p className="text-[10px] uppercase tracking-wider font-bold text-gray-500 mb-3 ml-1">
+                    {mockAiInsights.length} Opportunities Identified
                 </p>
 
                 {mockAiInsights.map((insight, index) => (

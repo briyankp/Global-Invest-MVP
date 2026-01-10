@@ -15,6 +15,7 @@ import {
     AIInsightCard,
     TradeSuccessMessage,
 } from '../components/AIMessageComponents';
+import ScreenHeader from '../components/ScreenHeader';
 
 // Generate unique ID
 const generateId = () => Math.random().toString(36).substring(2, 9);
@@ -389,20 +390,16 @@ const AiAssistantScreen: React.FC<NavigationProps> = ({ navigate }) => {
     return (
         <div className="flex flex-col h-full bg-gradient-to-b from-gray-50 to-white">
             {/* Header */}
-            <header className="p-4 border-b bg-white/80 backdrop-blur-sm text-center sticky top-0 z-10">
-                <div className="flex items-center justify-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white">
+            <ScreenHeader
+                title="AI Investment Banker"
+                subtitle="Online • Ready to assist"
+                className="rounded-b-[2rem] shadow-lg sticky top-0 z-20"
+                rightElement={
+                    <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white backdrop-blur-md border border-white/30">
                         <SparklesIcon />
                     </div>
-                    <div>
-                        <h1 className="text-lg font-bold text-gray-800">AI Investment Banker</h1>
-                        <p className="text-xs text-positive flex items-center justify-center gap-1">
-                            <span className="w-1.5 h-1.5 bg-positive rounded-full animate-pulse"></span>
-                            Online • Ready to assist
-                        </p>
-                    </div>
-                </div>
-            </header>
+                }
+            />
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4">

@@ -1,0 +1,21 @@
+{
+    "name": "Global Invest AI",
+    "short_name": "Global Invest",
+    "start_url": "/Global-Invest-MVP/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#24003d",
+    "description": "AI-powered global investment platform for Indian investors",
+    "icons": [
+        {
+            "src": "pwa-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "pwa-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

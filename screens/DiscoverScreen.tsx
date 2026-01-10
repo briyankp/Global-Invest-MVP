@@ -5,6 +5,7 @@ import { SCREENS } from '../constants';
 import { mockStocks, mockInternationalStocks } from '../services/mockData';
 import { searchStocks } from '../services/geminiService';
 import SearchIcon from '../components/icons/SearchIcon';
+import ScreenHeader from '../components/ScreenHeader';
 
 const DiscoverScreen: React.FC<NavigationProps> = ({ navigate }) => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -61,29 +62,29 @@ const DiscoverScreen: React.FC<NavigationProps> = ({ navigate }) => {
         return (
             <button
                 onClick={() => navigate(SCREENS.STOCK_DETAIL, stock)}
-                className="flex items-center justify-between w-full p-4 bg-white rounded-xl mb-3 transition-all hover:shadow-md hover:scale-[1.01] border border-gray-100 group"
+                className="flex items-center justify-between w-full p-2.5 bg-white rounded-xl mb-2 transition-all hover:shadow-md hover:scale-[1.01] border border-gray-100 group"
             >
                 <div className="flex items-center flex-1">
-                    <img src={stock.logo} alt={stock.name} className="w-11 h-11 rounded-full mr-4 shadow-sm" />
+                    <img src={stock.logo} alt={stock.name} className="w-8 h-8 rounded-full mr-3 shadow-sm" />
                     <div className="text-left">
-                        <p className="font-bold text-gray-800">{stock.ticker}</p>
-                        <p className="text-sm text-gray-500 truncate max-w-[120px]">{stock.name}</p>
+                        <p className="font-bold text-gray-800 text-sm">{stock.ticker}</p>
+                        <p className="text-[10px] text-gray-500 truncate max-w-[120px]">{stock.name}</p>
                     </div>
                 </div>
                 <div className="text-right mr-3">
-                    <p className="font-semibold text-gray-900">${stock.price.toFixed(2)}</p>
-                    <p className={`text-sm font-medium ${stock.changePercent >= 0 ? 'text-positive' : 'text-negative'}`}>
+                    <p className="font-semibold text-gray-900 text-sm">${stock.price.toFixed(2)}</p>
+                    <p className={`text-[10px] font-medium ${stock.changePercent >= 0 ? 'text-positive' : 'text-negative'}`}>
                         {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
                     </p>
                 </div>
                 <button
                     onClick={(e) => toggleWatchlist(stock.ticker, e)}
-                    className={`p-2 rounded-full transition-all ${isInWatchlist
-                            ? 'bg-primary/10 text-primary'
-                            : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                    className={`p-1.5 rounded-full transition-all ${isInWatchlist
+                        ? 'bg-primary/10 text-primary'
+                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
                         }`}
                 >
-                    <svg className="w-5 h-5" fill={isInWatchlist ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4" fill={isInWatchlist ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                     </svg>
                 </button>
@@ -92,73 +93,78 @@ const DiscoverScreen: React.FC<NavigationProps> = ({ navigate }) => {
     };
 
     return (
-        <div className="p-4 pb-24">
-            <h1 className="text-3xl font-bold text-gray-900">Discover</h1>
-            <p className="text-gray-500 mt-1">Explore global investment opportunities</p>
-
-            <div className="relative my-4">
-                <input
-                    type="text"
-                    placeholder='"AI chip stocks" or "European dividend payers"'
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                    className="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-gray-50 transition-all"
-                />
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                    <SearchIcon />
-                </div>
-            </div>
-
-            {searchResults ? (
-                <div className="animate-fadeIn">
-                    <div className="flex justify-between items-center mb-3">
-                        <h2 className="text-lg font-bold text-gray-800">Search Results</h2>
-                        <button
-                            onClick={() => setSearchResults(null)}
-                            className="text-sm text-primary font-medium"
-                        >
-                            Clear
-                        </button>
+        <div className="pb-24 min-h-full bg-gray-50">
+            <ScreenHeader
+                title="Discover"
+                subtitle="Explore global investment opportunities"
+            >
+                <div className="relative mt-1">
+                    <input
+                        type="text"
+                        placeholder='"AI chip stocks" or "European dividend payers"'
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                        className="w-full pl-10 pr-4 py-3 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/50 bg-white text-gray-900 shadow-lg shadow-black/5 placeholder-gray-400 transition-all text-sm"
+                    />
+                    <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+                        <SearchIcon />
                     </div>
-                    {searchResults.length > 0 ? (
-                        searchResults.map(stock => <StockListItem key={stock.ticker} stock={stock} />)
-                    ) : (
-                        <p className="text-center text-gray-500 py-8">No results found.</p>
-                    )}
                 </div>
-            ) : (
-                <>
-                    <div className="flex space-x-1 bg-gray-100 p-1 rounded-xl mb-4">
-                        {tabs.map(tab => (
+            </ScreenHeader>
+
+            <div className="p-4">
+
+                {searchResults ? (
+                    <div className="animate-fadeIn">
+                        <div className="flex justify-between items-center mb-3">
+                            <h2 className="text-lg font-bold text-gray-800">Search Results</h2>
                             <button
-                                key={tab}
-                                onClick={() => setActiveTab(tab)}
-                                className={`flex-1 px-3 py-2.5 text-sm font-semibold rounded-lg transition-all ${activeTab === tab
+                                onClick={() => setSearchResults(null)}
+                                className="text-sm text-primary font-medium"
+                            >
+                                Clear
+                            </button>
+                        </div>
+                        {searchResults.length > 0 ? (
+                            searchResults.map(stock => <StockListItem key={stock.ticker} stock={stock} />)
+                        ) : (
+                            <p className="text-center text-gray-500 py-8">No results found.</p>
+                        )}
+                    </div>
+                ) : (
+                    <>
+                        <div className="flex space-x-1 bg-gray-100 p-1 rounded-xl mb-4">
+                            {tabs.map(tab => (
+                                <button
+                                    key={tab}
+                                    onClick={() => setActiveTab(tab)}
+                                    className={`flex-1 px-3 py-2.5 text-sm font-semibold rounded-lg transition-all ${activeTab === tab
                                         ? 'bg-white text-gray-900 shadow-sm'
                                         : 'text-gray-500 hover:text-gray-700'
-                                    }`}
-                            >
-                                {tab}
-                            </button>
-                        ))}
-                    </div>
+                                        }`}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
+                        </div>
 
-                    <div className="animate-fadeIn">
-                        {getStockList().map(stock => <StockListItem key={stock.ticker} stock={stock} />)}
-                    </div>
-                </>
-            )}
+                        <div className="animate-fadeIn">
+                            {getStockList().map(stock => <StockListItem key={stock.ticker} stock={stock} />)}
+                        </div>
+                    </>
+                )}
 
-            {/* Toast notification */}
-            {toastMessage && (
-                <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-4 py-3 rounded-xl shadow-lg animate-slideUp flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-positive" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    {toastMessage}
-                </div>
-            )}
+                {/* Toast notification */}
+                {toastMessage && (
+                    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-4 py-3 rounded-xl shadow-lg animate-slideUp flex items-center">
+                        <svg className="w-5 h-5 mr-2 text-positive" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        {toastMessage}
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

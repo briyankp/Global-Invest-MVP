@@ -7,6 +7,7 @@ import ChevronLeftIcon from '../components/icons/ChevronLeftIcon';
 import SparklesIcon from '../components/icons/SparklesIcon';
 import LinkIcon from '../components/icons/LinkIcon';
 import NewspaperIcon from '../components/icons/NewspaperIcon';
+import ScreenHeader from '../components/ScreenHeader';
 
 
 interface StockDetailScreenProps extends NavigationProps {
@@ -203,22 +204,26 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({ stock, navigate }
 
     return (
         <div className="bg-gray-50 min-h-full">
-            <header className="p-4 flex items-center bg-white border-b border-gray-100 sticky top-0 z-10">
-                <button onClick={() => navigate(SCREENS.HOME)} className="mr-2 p-1">
-                    <ChevronLeftIcon />
-                </button>
-                <img src={stock.logo} alt={stock.name} className="w-9 h-9 rounded-full mr-3" />
-                <div className="flex-1">
-                    <h1 className="text-lg font-bold text-gray-900">{stock.ticker}</h1>
-                    <p className="text-xs text-gray-500 truncate">{stock.name}</p>
-                </div>
-                <div className="text-right">
-                    <p className="text-lg font-bold">${stock.price.toFixed(2)}</p>
-                    <p className={`text-xs font-semibold ${isPositive ? 'text-positive' : 'text-negative'}`}>
-                        {isPositive ? '+' : ''}{stock.change.toFixed(2)} ({isPositive ? '+' : ''}{stock.changePercent.toFixed(2)}%)
-                    </p>
-                </div>
-            </header>
+            <ScreenHeader
+                title={stock.ticker}
+                subtitle={stock.name}
+                showBack={true}
+                onBack={() => navigate(SCREENS.HOME)}
+                className="justify-center"
+                rightElement={
+                    <div className="text-right flex flex-col items-end justify-center h-full">
+                        <div className="flex items-baseline gap-2">
+                            <p className="text-xl font-bold">${stock.price.toFixed(2)}</p>
+                        </div>
+                        <p className={`text-xs font-semibold flex items-center gap-1 ${isPositive ? 'text-green-300' : 'text-red-300'}`}>
+                            {isPositive ? '+' : ''}{stock.change.toFixed(2)} ({isPositive ? '+' : ''}{stock.changePercent.toFixed(2)}%)
+                        </p>
+                    </div>
+                }
+            >
+                {/* Empty children to minimize height, explicitly compact */}
+                <div className="hidden"></div>
+            </ScreenHeader>
 
             <div className="flex border-b border-gray-200 bg-white">
                 <TabButton label="Overview" name="overview" />
@@ -226,13 +231,13 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({ stock, navigate }
                 <TabButton label="News & Analysis" name="news" />
             </div>
 
-            <div className="p-4 pb-24">
+            <div className="p-4 pb-20">
                 {activeTab === 'overview' && <OverviewTab stock={stock} />}
                 {activeTab === 'financials' && <FinancialsTab stock={stock} />}
                 {activeTab === 'news' && <NewsAndAnalysisTab stock={stock} />}
             </div>
 
-            <div className="fixed bottom-20 left-0 right-0 w-full max-w-md mx-auto p-3 bg-transparent pointer-events-none">
+            <div className="fixed bottom-16 left-0 right-0 w-full max-w-md mx-auto p-2 bg-transparent pointer-events-none">
                 <div className="flex space-x-3 bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-lg pointer-events-auto">
                     <button onClick={() => handleOpenTrade('sell')} className="w-1/2 py-3 bg-negative text-white font-bold rounded-full text-lg shadow-md hover:bg-red-600 transition active:scale-95">Sell</button>
                     <button onClick={() => handleOpenTrade('buy')} className="w-1/2 py-3 bg-positive text-white font-bold rounded-full text-lg shadow-md hover:bg-green-600 transition active:scale-95">Buy</button>

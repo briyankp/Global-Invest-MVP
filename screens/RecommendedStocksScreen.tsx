@@ -6,6 +6,7 @@ import LightbulbIcon from '../components/icons/LightbulbIcon';
 import ClockIcon from '../components/icons/ClockIcon';
 import CalendarIcon from '../components/icons/CalendarIcon';
 import SparklesIcon from '../components/icons/SparklesIcon';
+import ScreenHeader from '../components/ScreenHeader';
 
 interface RecommendedStocksScreenProps extends NavigationProps {
     payload: AiInsight;
@@ -87,16 +88,16 @@ const RecommendedStocksScreen: React.FC<RecommendedStocksScreenProps> = ({ navig
     const USD_TO_INR = 83.56;
 
     const InfoCard: React.FC<{ icon: React.ReactNode; title: string; children: React.ReactNode; isTyping?: boolean }> = ({ icon, title, children, isTyping }) => (
-        <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-            <div className="flex items-start gap-3">
-                <div className="w-8 h-8 text-primary flex-shrink-0 mt-1">
+        <div className="bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm">
+            <div className="flex items-start gap-2.5">
+                <div className="w-5 h-5 text-primary flex-shrink-0 mt-0.5">
                     {icon}
                 </div>
                 <div className="flex-1">
-                    <h3 className="font-bold text-gray-800">{title}</h3>
-                    <p className="text-sm text-gray-600 mt-1 leading-relaxed">
+                    <h3 className="font-bold text-gray-800 text-xs">{title}</h3>
+                    <p className="text-[11px] text-gray-600 mt-0.5 leading-relaxed">
                         {children}
-                        {isTyping && <span className="inline-block w-0.5 h-4 bg-primary ml-0.5 animate-pulse" />}
+                        {isTyping && <span className="inline-block w-0.5 h-3 bg-primary ml-0.5 animate-pulse" />}
                     </p>
                 </div>
             </div>
@@ -104,22 +105,22 @@ const RecommendedStocksScreen: React.FC<RecommendedStocksScreenProps> = ({ navig
     );
 
     const StockListItem: React.FC<{ stock: Stock; allocation: number }> = ({ stock, allocation }) => (
-        <button onClick={() => navigate(SCREENS.STOCK_DETAIL, stock)} className="flex items-center justify-between w-full p-4 bg-white rounded-xl mb-3 transition-all hover:shadow-md border border-gray-100 group">
+        <button onClick={() => navigate(SCREENS.STOCK_DETAIL, stock)} className="flex items-center justify-between w-full p-2.5 bg-white rounded-xl mb-2 transition-all hover:shadow-md border border-gray-100 group">
             <div className="flex items-center flex-1">
                 <div className="relative">
-                    <img src={stock.logo} alt={stock.name} className="w-12 h-12 rounded-full border-2 border-white shadow-sm" />
-                    <div className="absolute -bottom-1 -right-1 bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                    <img src={stock.logo} alt={stock.name} className="w-10 h-10 rounded-full border-2 border-white shadow-sm" />
+                    <div className="absolute -bottom-1 -right-1 bg-primary text-white text-[9px] font-bold px-1.5 py-0 rounded-full">
                         {allocation}%
                     </div>
                 </div>
-                <div className="ml-4">
-                    <p className="font-bold text-gray-800">{stock.ticker}</p>
-                    <p className="text-sm text-gray-500 truncate max-w-[150px]">{stock.name}</p>
+                <div className="ml-3 text-left">
+                    <p className="font-bold text-gray-800 text-sm">{stock.ticker}</p>
+                    <p className="text-[10px] text-gray-500 truncate max-w-[150px]">{stock.name}</p>
                 </div>
             </div>
             <div className="text-right">
-                <p className="font-semibold text-gray-900">${stock.price.toFixed(2)}</p>
-                <p className={`text-sm font-medium ${stock.changePercent >= 0 ? 'text-positive' : 'text-negative'}`}>
+                <p className="font-semibold text-gray-900 text-sm">${stock.price.toFixed(2)}</p>
+                <p className={`text-[10px] font-medium ${stock.changePercent >= 0 ? 'text-positive' : 'text-negative'}`}>
                     {stock.changePercent >= 0 ? '↑' : '↓'} {Math.abs(stock.changePercent).toFixed(2)}%
                 </p>
             </div>
@@ -134,27 +135,30 @@ const RecommendedStocksScreen: React.FC<RecommendedStocksScreenProps> = ({ navig
     }) || [];
 
     return (
-        <div className="min-h-full bg-gradient-to-b from-gray-50 to-white">
+        <div className="min-h-full bg-gray-50 pb-20">
             {/* Header */}
-            <header className="p-4 flex items-center bg-white/90 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-10">
-                <button onClick={() => navigate(SCREENS.AI_INSIGHTS)} className="mr-2 p-1">
-                    <ChevronLeftIcon />
-                </button>
-                <div className="flex-1">
-                    <h1 className="text-lg font-bold text-gray-900 truncate">{title}</h1>
-                    <div className="flex items-center gap-1 text-sm text-primary">
+            <ScreenHeader
+                title={title}
+                subtitle="AI Investment Thesis"
+                showBack={true}
+                onBack={() => navigate(SCREENS.AI_INSIGHTS)}
+                rightElement={
+                    <button
+                        onClick={() => setShowInvestModal(true)}
+                        className="bg-white/20 hover:bg-white/30 text-white font-bold text-xs px-4 py-1.5 rounded-full backdrop-blur-md transition-all border border-white/20 shadow-sm flex items-center gap-1.5"
+                    >
                         <SparklesIcon />
-                        <span>AI Investment Thesis</span>
-                    </div>
-                </div>
-            </header>
+                        Invest
+                    </button>
+                }
+            />
 
-            <div className="p-4 space-y-5 pb-32">
+            <div className="p-3 space-y-3 pb-20 -mt-4 relative z-20">
                 {/* Confidence Score */}
                 <ConfidenceScore score={confidenceScore} />
 
                 {/* AI Explanation Cards with Typewriter */}
-                <div className="space-y-4">
+                <div className="space-y-2">
                     <InfoCard icon={<LightbulbIcon />} title="The Big Idea (Why)" isTyping={!rationaleComplete}>
                         {rationaleText}
                     </InfoCard>
@@ -162,7 +166,7 @@ const RecommendedStocksScreen: React.FC<RecommendedStocksScreenProps> = ({ navig
                         {timing}
                     </InfoCard>
                     <InfoCard icon={<CalendarIcon />} title="Investment Horizon">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-primary/10 text-primary font-semibold text-sm">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-primary/10 text-primary font-semibold text-[10px]">
                             {horizon}
                         </span>
                     </InfoCard>
@@ -170,32 +174,23 @@ const RecommendedStocksScreen: React.FC<RecommendedStocksScreenProps> = ({ navig
 
                 {/* Recommended Stocks */}
                 <section>
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-bold text-gray-800">Suggested Allocation</h2>
-                        <span className="text-xs text-gray-500">Tap to view details</span>
+                    <div className="flex items-center justify-between mb-2">
+                        <h2 className="text-sm font-bold text-gray-800">Suggested Allocation</h2>
+                        <span className="text-[10px] text-gray-500">Tap for details</span>
                     </div>
                     {stocks && stocks.length > 0 ? (
                         stocks.map((stock, i) => <StockListItem key={stock.ticker} stock={stock} allocation={allocations[i]} />)
                     ) : (
-                        <p className="text-center text-gray-500 py-8">No recommended stocks for this insight.</p>
+                        <p className="text-center text-gray-500 py-8 text-xs">No recommended stocks for this insight.</p>
                     )}
                 </section>
-            </div>
 
-            {/* Invest in This Idea CTA - Fixed at bottom */}
-            <div className="fixed bottom-24 left-0 right-0 w-full max-w-md mx-auto p-4 bg-gradient-to-t from-white via-white to-transparent flex flex-col gap-3">
-                <button
-                    onClick={() => setShowInvestModal(true)}
-                    className="w-full py-4 bg-gradient-to-r from-primary to-primary-dark text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
-                >
-                    <SparklesIcon />
-                    <span>Invest in This Idea</span>
-                </button>
+                {/* Explore Other Themes Button */}
                 <button
                     onClick={() => navigate(SCREENS.AI_INSIGHTS)}
-                    className="w-full py-2 text-primary font-semibold text-sm text-center"
+                    className="w-full py-3 mt-4 bg-white border border-primary/20 text-primary font-bold rounded-xl text-sm hover:bg-primary/5 transition-all text-center shadowing-sm"
                 >
-                    Explore Other Themes
+                    Explore More Themes
                 </button>
             </div>
 
